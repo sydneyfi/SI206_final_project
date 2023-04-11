@@ -34,7 +34,23 @@ def createTable():
 def make_top_companies_table(cur, conn, list_of_tups):
     cur.execute('''CREATE TABLE IF NOT EXISTS Website (id INTEGER PRIMARY KEY, ranking INTEGER UNIQUE,
                     name TEXT, ticker TEXT)''')
-    for i in range(len(list_of_tups)):
+    cur.execute("SELECT MAX(id) FROM Website")
+    start = None
+    try:
+        row = cur.fetchone()
+        if row is None:
+            start = 0
+        else:
+            start = row[0] + 1
+    except:
+        start = 0
+
+    if start is None: start = 0
+    end = start + 25
+    if end > 100:
+        end = 100
+    
+    for i in range(start, end):
         cur.execute("INSERT OR IGNORE INTO Website (id, ranking, name, ticker) VALUES (?,?,?,?)",(i, list_of_tups[i][2], list_of_tups[i][0], list_of_tups[i][1]))
 
     conn.commit()
