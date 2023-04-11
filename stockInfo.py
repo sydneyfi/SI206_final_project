@@ -26,7 +26,7 @@ def make_db(db):
 
 def main():
     url1 = 'https://financialmodelingprep.com/api/v3/profile/'
-    ticker = 'AAPL'
+    ticker = None
     url2 = '?apikey=7b82b2f514ddca127fb725b5c725eb67'
 
     cur, conn = make_db('Companies.db')
@@ -38,11 +38,26 @@ def main():
         '''
     )
 
+    cur.execute('SELECT max(id) FROM Financial')
+    start = None
+    try:
+        row = cur.fetchone()
+        if row is None:
+            start = 0
+        else:
+            start = row[0] + 1
+    except:
+        start = 0
+    
+    if start is None: start = 0
+    end = start + 25
+    if end > 100: end = 100
+
     cur.execute('SELECT id, ticker FROM Website')
     webs = cur.fetchall()
 
-    for w in webs:
-        ticker = w[1]
+    for i in range(start, end): # INSERT max 25 items :), not take
+        ticker = webs[i][1]
         data_dict = get_jsonparsed_data(url1 + ticker + url2)[0]
 
         price = data_dict['price']
@@ -50,7 +65,7 @@ def main():
 
         # print((w[0], price, website))
 
-        cur.execute('INSERT OR IGNORE INTO Financial (id, stock_price, website) VALUES (?,?,?)', (int(w[0]), float(price), website))
+        cur.execute('INSERT OR IGNORE INTO Financial (id, stock_price, website) VALUES (?,?,?)', (int(webs[i][0]), float(price), website))
 
     conn.commit()
 
