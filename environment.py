@@ -63,15 +63,23 @@ def main():
     cur.execute('SELECT id, website FROM Financial')
     finance = cur.fetchall()
 
+    cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (0, "unknown"))
+    cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (1, "True"))
+    cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (2, "null"))
+
     for i in range(start, end): # INSERT max 25 items :), not take
         website = finance[i][1]
         data_dict = get_jsonparsed_data(url1 + website)
         if data_dict is None:
             label = "null"
         else:
+            #how do i deal with the label?? like how do i manually check? this will go into green_id
             label = str(data_dict.get('green', "unknown"))
+            clean = data_dict["cleanerThan"]
+            bit = data_dict["statistics"]["adjustedBytes"]
+            carbon = data_dict["statistics"]["co2"]["grid"]["grams"]
 
-        cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (int(finance[i][0]), label))
+        cur.execute('INSERT OR IGNORE INTO Environment (id, green_id, cleaner_than, bytes, CO2) VALUES (?,?,?,?,?)', (int(finance[i][0]), label, clean, bit, carbon))
 
     conn.commit()
 
