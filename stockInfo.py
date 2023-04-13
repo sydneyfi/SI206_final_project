@@ -4,6 +4,7 @@ import certifi
 import json
 import os
 import requests
+import re
 
 
 # financial modeling prep API Key: 7b82b2f514ddca127fb725b5c725eb67
@@ -30,11 +31,11 @@ def main():
     url2 = '?apikey=7b82b2f514ddca127fb725b5c725eb67'
 
     cur, conn = make_db('Companies.db')
-
+    
     cur.execute(
         '''
         CREATE TABLE IF NOT EXISTS Financial
-        (id INTEGER PRIMARY KEY, stock_price FLOAT, website TEXT)
+        (id INTEGER PRIMARY KEY, curr_price FLOAT, low_price FLOAT, high_price FLOAT, website TEXT)
         '''
     )
 
@@ -62,10 +63,18 @@ def main():
 
         price = data_dict['price']
         website = data_dict['website']
+        r = data_dict['range'] # range
+        range_high = 0
+        range_low = 0
 
-        # print((w[0], price, website))
+        reg = '(\d+\.\d+)-(\d+\.\d+)'
+        if re.search(reg, r) != None:
+            range_high = float(re.findall(reg, r)[0][1])
+            range_low = float(re.findall(reg, r)[0][0])
+        else:
+            print('error with range regex')
 
-        cur.execute('INSERT OR IGNORE INTO Financial (id, stock_price, website) VALUES (?,?,?)', (int(webs[i][0]), float(price), website))
+        cur.execute('INSERT OR IGNORE INTO Financial (id, curr_price, low_price, high_price, website) VALUES (?,?,?,?,?)', (int(webs[i][0]), float(price), range_low, range_high, website))
 
     conn.commit()
 
