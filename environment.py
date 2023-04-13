@@ -60,28 +60,62 @@ def main():
     end = start + 25
     if end > 100: end = 100
 
+
+
+    # cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (0, "unknown"))
+    # cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (1, "True"))
+    # cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (2, "null"))
+
     cur.execute('SELECT id, website FROM Financial')
     finance = cur.fetchall()
-
-    cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (0, "unknown"))
-    cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (1, "True"))
-    cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (2, "null"))
 
     for i in range(start, end): # INSERT max 25 items :), not take
         website = finance[i][1]
         data_dict = get_jsonparsed_data(url1 + website)
+        #FIX HERE
         if data_dict is None:
-            label = "null"
+            print(website)
+            continue
+            #set row to null in database
+
         else:
             #how do i deal with the label?? like how do i manually check? this will go into green_id
-            label = str(data_dict.get('green', "unknown"))
-            clean = data_dict["cleanerThan"]
-            bit = data_dict["statistics"]["adjustedBytes"]
-            carbon = data_dict["statistics"]["co2"]["grid"]["grams"]
+            green_label = str(data_dict.get('green', "no data"))
+            cur.execute("SELECT id FROM Green WHERE label = ?", (green_label, ))
 
-        cur.execute('INSERT OR IGNORE INTO Environment (id, green_id, cleaner_than, bytes, CO2) VALUES (?,?,?,?,?)', (int(finance[i][0]), label, clean, bit, carbon))
+            green_tup = cur.fetchone()
 
-    conn.commit()
+
+            if green_tup is None or green_tup[0] is None:
+                cur.execute('SELECT MAX(id) FROM Green')
+                max_tuple = cur.fetchone()
+
+                if max_tuple is None or max_tuple[0] is None:
+                    max_id = 0
+                
+                else:
+                    max_id = int(max_tuple[0]) + 1
+                    
+                cur.execute("INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)", (max_id, green_label))
+                green_id = max_id
+            else:
+                green_id = int(green_tup[0])
+
+                
+
+        
+            clean = data_dict.get("cleanerThan", -1)
+            
+            if data_dict == {}:
+                print(website)
+                bit = -1
+                carbon = -1
+            else:
+                bit = data_dict["statistics"]["adjustedBytes"]
+                carbon = data_dict["statistics"]["co2"]["grid"]["grams"]
+
+        cur.execute('INSERT OR IGNORE INTO Environment (id, green_id, cleaner_than, bytes, CO2) VALUES (?,?,?,?,?)', (int(finance[i][0]), green_id, clean, bit, carbon))
+        conn.commit()
 
     # if cur.fetchone() == None:
 
