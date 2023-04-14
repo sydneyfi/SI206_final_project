@@ -34,17 +34,6 @@ def main():
     
     cur.execute(
         '''
-        DROP TABLE IF EXISTS Environment
-        '''
-    )
-
-    cur.execute(
-        '''
-        DROP TABLE IF EXISTS Green
-        '''
-    )
-    cur.execute(
-        '''
         CREATE TABLE IF NOT EXISTS Environment
         (id INTEGER PRIMARY KEY, green_id INTEGER, cleaner_than FLOAT, bytes FLOAT, CO2 FLOAT)
         '''
