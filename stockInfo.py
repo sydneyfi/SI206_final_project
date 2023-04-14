@@ -25,7 +25,7 @@ def make_db(db):
     return cur, conn
     
 
-def main():
+def stockInfo():
     url1 = 'https://financialmodelingprep.com/api/v3/profile/'
     ticker = None
     url2 = '?apikey=7b82b2f514ddca127fb725b5c725eb67'
@@ -84,4 +84,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    stockInfo()

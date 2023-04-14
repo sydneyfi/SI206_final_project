@@ -57,7 +57,7 @@ def make_top_companies_table(cur, conn, list_of_tups):
 
 
 
-def main():
+def topCompanies():
     companies = get_top_companies()
     cur, conn = createTable()
     make_top_companies_table(cur, conn, companies)
@@ -66,4 +66,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    topCompanies()

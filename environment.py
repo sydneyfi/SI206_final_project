@@ -23,7 +23,7 @@ def make_db(db):
     return cur, conn
     
 
-def main():
+def environment():
     url1 = 'https://api.websitecarbon.com/site?url='
     website = None
 
@@ -120,4 +120,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    environment()
