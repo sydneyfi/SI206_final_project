@@ -9,9 +9,6 @@ import requests
 # financial modeling prep API Key: 7b82b2f514ddca127fb725b5c725eb67
 
 def get_jsonparsed_data(url):
-    # response = urlopen(url, cafile=certifi.where())
-    # data = response.read().decode("utf-8")
-    # return json.loads(data)
     try:
         data = requests.get(url, timeout=None)
         return data.json()
@@ -45,7 +42,7 @@ def main():
         '''
     )
 
-    cur.execute('SELECT max(id) FROM Green')
+    cur.execute('SELECT max(id) FROM Environment')
     start = None
     try:
         row = cur.fetchone()
@@ -58,64 +55,61 @@ def main():
     
     if start is None: start = 0
     end = start + 25
-    if end > 100: end = 100
-
-
-
-    # cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (0, "unknown"))
-    # cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (1, "True"))
-    # cur.execute('INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)', (2, "null"))
+    if end > 100: end = 100 # account for index out of range
 
     cur.execute('SELECT id, website FROM Financial')
     finance = cur.fetchall()
 
     for i in range(start, end): # INSERT max 25 items :), not take
         website = finance[i][1]
-        if website == "https://www.stock.walmart.com":
+        if website == "https://www.stock.walmart.com": # clean data for websites that don't work
             website = "https://www.walmart.com"
+        elif website == "https://corporate.mcdonalds.com":
+            website = "https://www.mcdonalds.com"
+        elif website == "https://www.amd.com":
+            website = "https://ir.amd.com/"
+        elif website == "https://www.lowes.com":
+            website = "https://corporate.lowes.com/"
+        elif website == "https://www.spglobal.com":
+            website = "https://investor.spglobal.com/"
+
+        print("i:", i, ", Website:", website)
 
         data_dict = get_jsonparsed_data(url1 + website)
-        #FIX HERE
-        if data_dict is None:
-            print(website)
-            continue
-            #set row to null in database
-
-        else:
-            #how do i deal with the label?? like how do i manually check? this will go into green_id
-            green_label = str(data_dict.get('green', "no data"))
-            cur.execute("SELECT id FROM Green WHERE label = ?", (green_label, ))
-
-            green_tup = cur.fetchone()
-
-
-            if green_tup is None or green_tup[0] is None:
-                cur.execute('SELECT MAX(id) FROM Green')
-                max_tuple = cur.fetchone()
-
-                if max_tuple is None or max_tuple[0] is None:
-                    max_id = 0
-                
-                else:
-                    max_id = int(max_tuple[0]) + 1
-                    
-                cur.execute("INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)", (max_id, green_label))
-                green_id = max_id
-            else:
-                green_id = int(green_tup[0])
-
-                
-
         
-            clean = data_dict.get("cleanerThan", -1)
-            
-            if data_dict == {}:
-                print(website)
-                bit = -1
-                carbon = -1
+        if data_dict is None:
+            print("None dict:", website)
+            return
+        elif data_dict == {}:
+            print("Empty dict:",website) # cahnge so that it uhhh re-requests
+            data_dict = get_jsonparsed_data(url1 + website)
+            while data_dict == {}:
+                print("rerunning: ", website)
+                data_dict = get_jsonparsed_data(url1 + website)
+        
+        green_label = str(data_dict.get('green', "no data"))
+        cur.execute("SELECT id FROM Green WHERE label = ?", (green_label, ))
+
+        green_tup = cur.fetchone()
+
+        if green_tup is None or green_tup[0] is None:
+            cur.execute('SELECT MAX(id) FROM Green')
+            max_tuple = cur.fetchone()
+
+            if max_tuple is None or max_tuple[0] is None:
+                max_id = 0
             else:
-                bit = data_dict["statistics"]["adjustedBytes"]
-                carbon = data_dict["statistics"]["co2"]["grid"]["grams"]
+                max_id = int(max_tuple[0]) + 1
+                
+            cur.execute("INSERT OR IGNORE INTO Green (id, label) VALUES (?,?)", (max_id, green_label))
+            green_id = max_id
+        else:
+            green_id = int(green_tup[0])
+
+
+        clean = data_dict.get("cleanerThan", -1)
+        bit = data_dict["statistics"]["adjustedBytes"]
+        carbon = data_dict["statistics"]["co2"]["grid"]["grams"]
 
         cur.execute('INSERT OR IGNORE INTO Environment (id, green_id, cleaner_than, bytes, CO2) VALUES (?,?,?,?,?)', (int(finance[i][0]), green_id, clean, bit, carbon))
         conn.commit()
