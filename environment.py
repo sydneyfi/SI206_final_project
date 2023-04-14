@@ -13,7 +13,7 @@ def get_jsonparsed_data(url):
     # data = response.read().decode("utf-8")
     # return json.loads(data)
     try:
-        data = requests.get(url)
+        data = requests.get(url, timeout=None)
         return data.json()
     except:
         return None
@@ -31,7 +31,18 @@ def main():
     website = None
 
     cur, conn = make_db('Companies.db')
+    
+    cur.execute(
+        '''
+        DROP TABLE IF EXISTS Environment
+        '''
+    )
 
+    cur.execute(
+        '''
+        DROP TABLE IF EXISTS Green
+        '''
+    )
     cur.execute(
         '''
         CREATE TABLE IF NOT EXISTS Environment
@@ -71,6 +82,9 @@ def main():
 
     for i in range(start, end): # INSERT max 25 items :), not take
         website = finance[i][1]
+        if website == "https://www.stock.walmart.com":
+            website = "https://www.walmart.com"
+
         data_dict = get_jsonparsed_data(url1 + website)
         #FIX HERE
         if data_dict is None:
