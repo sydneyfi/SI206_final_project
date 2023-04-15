@@ -1,6 +1,42 @@
 {
-    "pie_chart": {
+    "green_count": {
         "True": 75,
         "unknown": 25
+    },
+    "top_avg_stock": {
+        "Booking Holdings (Booking.com)": 2147.01,
+        "Regeneron Pharmaceuticals": 687.78,
+        "BlackRock": 644.38,
+        "Thermo Fisher Scientific": 543.41,
+        "Broadcom": 531.78,
+        "Costco": 507.84,
+        "UnitedHealth": 503.9,
+        "Elevance Health": 494.77,
+        "Lockheed Martin": 436.31,
+        "ServiceNow": 429.55
+    },
+    "top_carbon_per_byte": {
+        "Apple": 0.03334321081638336,
+        "Microsoft": 0.033343210816383355,
+        "Alphabet (Google)": 0.03334321081638336,
+        "Amazon": 0.03334321081638336,
+        "Berkshire Hathaway ": 0.033343210816383355,
+        "NVIDIA": 0.03334321081638336,
+        "Tesla": 0.033343210816383355,
+        "Meta Platforms (Facebook)": 0.03334321081638336,
+        "Johnson & Johnson": 0.03334321081638336,
+        "UnitedHealth": 0.03334321081638336
+    },
+    "bottom_carbon_per_byte": {
+        "Schlumberger": 0.03334321081638336,
+        "Target": 0.03334321081638336,
+        "Duke Energy": 0.03334321081638336,
+        "HCA Healthcare": 0.03334321081638336,
+        "Southern Company": 0.03334321081638336,
+        "Cigna": 0.03334321081638336,
+        "Zoetis": 0.03334321081638336,
+        "Altria Group": 0.03334321081638336,
+        "Progressive": 0.03334321081638336,
+        "Marsh & McLennan Companies": 0.03334321081638336
     }
 }
