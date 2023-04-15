@@ -1,5 +1,6 @@
 from urllib.request import urlopen
 import matplotlib.pyplot as plt
+import numpy as np
 import sqlite3
 import certifi
 import json
@@ -24,7 +25,28 @@ def pie_calc(cur, conn):
         # print(d)
     
     return d
+
+# def histogram_calc(cur, conn):
+#     cur.execute('SELECT cleaner_than FROM Environment')
+#     data_list = cur.fetchall()
+#     l = []
+
+#     for data in data_list:
+#         l.append(data[0])
+
+#     # Creating dataset
+#     a = np.array(l)
     
+#     # Creating histogram
+#     fig, ax = plt.subplots(figsize =(10, 7))
+#     ax.hist(a, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    
+#     # Show plot
+#     plt.show()
+
+
+
+
 
 def main():
     #put other file functions here in following order: topCompanies, stockInfo, environment
@@ -59,6 +81,24 @@ def main():
 
     ax.pie(x, radius= 3, center=(4,4), wedgeprops={"linewidth": 1, "edgecolor": "white"}, frame=True)
     plt.show()
+
+    # #histogram
+    # cur.execute('SELECT cleaner_than FROM Environment')
+    # data_list = cur.fetchall()
+    # l = []
+
+    # for data in data_list:
+    #     l.append(data[0])
+
+    # # Creating dataset
+    # a = np.array(l)
+    
+    # # Creating histogram
+    # fig, ax = plt.subplots(figsize =(10, 7))
+    # ax.hist(a, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+    
+    # # Show plot
+    # plt.show()
 
 
 
