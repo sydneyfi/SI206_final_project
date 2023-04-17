@@ -30,7 +30,6 @@ def pie_calc(cur, conn):
 
 
 def create_pie(filename):
-
     file = open(filename, "r")
     contents = file.read()
     dict = json.loads(contents)
@@ -39,11 +38,14 @@ def create_pie(filename):
     x = list(pie_chart.values())
     # plt.style.use('_mpl-gallery-nogrid')
     fig, ax = plt.subplots()
+    ax.axis('off')
 
     labels = 'Green', 'Not Green'
 
-    ax.pie(x, radius= 3, center=(4,4), wedgeprops={"linewidth": 1, "edgecolor": "white"}, frame=True, labels=labels, autopct='%1.1f%%')
+    ax.pie(x, radius= 8, center=(4,4), wedgeprops={"linewidth": 1, "edgecolor": "white"}, frame=True, labels=labels, autopct='%1.1f%%', colors=[(0.24, 0.69, 0.1, 0.8),(0.924, 0.69, 0.1, 0.8)])
     ax.set_title("Proportion of Top 100 Company's Websites that are considered Green")
+
+    fig.savefig('Pie.png')
 
 
 def create_histogram(cur, conn):
@@ -59,10 +61,26 @@ def create_histogram(cur, conn):
     
     # Creating histogram
     fig, ax = plt.subplots(figsize =(10, 7))
-    ax.hist(a, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
-    
-    # Show plot
-    # plt.show()
+    N, bins, patches = ax.hist(a, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], edgecolor='white', linewidth=1)
+
+    ax.set_title('Histogram of the Percentage of companies the Top 100 Companies are Cleaner than')
+    ax.set_xlabel('Percentage of Companies that are less clean than (in decimal form)')
+    ax.set_ylabel('# of Companies')
+    ax.set_ybound(0,25)
+    ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
+
+    patches[9].set_facecolor((0.24, 0.69, 0.1, 0.8)) # set the colors of the bins
+    patches[8].set_facecolor((0.316, 0.69, 0.1, 0.8))
+    patches[7].set_facecolor((0.392, 0.69, 0.1, 0.8))
+    patches[6].set_facecolor((0.468, 0.69, 0.1, 0.8))
+    patches[5].set_facecolor((0.544, 0.69, 0.1, 0.8))
+    patches[4].set_facecolor((0.62, 0.69, 0.1, 0.8))
+    patches[3].set_facecolor((0.696, 0.69, 0.1, 0.8))
+    patches[2].set_facecolor((0.772, 0.69, 0.1, 0.8))
+    patches[1].set_facecolor((0.848, 0.69, 0.1, 0.8))
+    patches[0].set_facecolor((0.924, 0.69, 0.1, 0.8))
+
+    fig.savefig('Histo.png')
 
 
 def bar_one_calc(cur, conn):
@@ -92,12 +110,19 @@ def create_bar_one(filename):
     x = list(dict['top_avg_stock'].keys())
     y = list(dict['top_avg_stock'].values())
 
-    fig, ax = plt.subplots(figsize =(20, 7))
-    ax.barh(x,y)
+    fig, ax = plt.subplots(figsize =(15, 7))
+    ax.barh(x,y, color = (0.24, 0.69, 0.1, 0.8))
 
     ax.set_xlabel('Average Stock Price ($)')
     ax.set_ylabel('Company Name')
-    # plt.show()
+    ax.set_title('Top 10 Companies w/the Highest Average Stock Price')
+
+    for i in range(10):
+        ax.text(float(y[i]) + 100, i, '$' + str(y[i]), ha = 'center')
+
+    plt.subplots_adjust(left=.25)
+
+    fig.savefig('Bar_1.png')
 
 
 def bar_two_calc(cur, conn):
@@ -135,19 +160,28 @@ def create_bar_two(filename):
     x2 = list(dict['bottom_carbon_per_byte'].keys())
     y2 = list(dict['bottom_carbon_per_byte'].values())
 
-    fig = plt.figure(figsize=(20,10))
+    fig = plt.figure(figsize=(15,15))
     ax1 = fig.add_subplot(211)
     ax2 = fig.add_subplot(212)
-    ax1.barh(x1, y1)
-    ax2.barh(x2, y2)
-    ax1.set_xlabel('CO2 per Byte')
-    ax1.set_ylabel('Company Name')
-    ax2.set_xlabel('CO2 per Byte')
-    ax2.set_ylabel('Company Name')
-    ax1.set_xlim([0.0333432108163833, 0.0333432108163834])
-    ax2.set_xlim([0.0333432108163833, 0.0333432108163834])
+    ax1.barh(x1, y1, color= (0.24, 0.69, 0.1, 0.8))
+    ax2.barh(x2, y2, color= (0.924, 0.69, 0.1, 0.8))
+    ax1.set_xlabel('CO2 per MegaByte')
+    ax1.set_ylabel('Company Name (+ Ranking)')
+    ax2.set_xlabel('CO2 per MegaByte')
+    ax2.set_ylabel('Company Name (+ Ranking)')
+    ax1.set_title('CO2 per MegaByte of the Top 10 Ranked Companies')
+    ax2.set_title('CO2 per MegaByte of the Lower 10 Ranked Companies')
 
-    plt.show()
+    rank_high = ['1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th']
+    rank_low = ['100th','99th','98th','97th','96th','95th','94th','93rd','92nd','91st','90th']
+
+    for i in range(10):
+        ax1.text(float(y1[i]) + 0.0007, i, rank_high[i], ha = 'center')
+        ax2.text(float(y2[i]) + 0.0007, i, rank_low[i], ha = 'center')
+
+    plt.subplots_adjust(left=.25)
+
+    fig.savefig('Bar_2.png')
 
 
 def main():
@@ -180,12 +214,11 @@ def main():
     with open(filename, 'w') as f:
         f.write(json.dumps(main_dict, indent=4))
 
-
     create_pie(filename)
     create_histogram(cur, conn)
     create_bar_one(filename)
     create_bar_two(filename)
-    # plt.show()
+    plt.show()
 
     
 
