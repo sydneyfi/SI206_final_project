@@ -21,7 +21,7 @@ def pie_calc(cur, conn):
 
     for gl in green_labels:
         leb = gl[0]
-        cur.execute("SELECT COUNT(Green.label) FROM Environment JOIN Green ON Environment.green_id = Green.id WHERE Green.label = ?", leb)
+        cur.execute(f"SELECT COUNT(Green.label) FROM Environment JOIN Green ON Environment.green_id = Green.id WHERE Green.label = '{leb}'")
         result = cur.fetchone()
         d[gl[0]] = result[0]
         # print("label:", gl, "result:", result[0])
