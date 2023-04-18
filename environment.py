@@ -114,7 +114,6 @@ def environment():
         cur.execute('INSERT OR IGNORE INTO Environment (id, green_id, cleaner_than, bytes, CO2) VALUES (?,?,?,?,?)', (int(finance[i][0]), green_id, clean, bit, carbon))
         conn.commit()
 
-    # if cur.fetchone() == None:
 
     
 

@@ -24,8 +24,6 @@ def pie_calc(cur, conn):
         cur.execute(f"SELECT COUNT(Green.label) FROM Environment JOIN Green ON Environment.green_id = Green.id WHERE Green.label = '{leb}'")
         result = cur.fetchone()
         d[gl[0]] = result[0]
-        # print("label:", gl, "result:", result[0])
-        # print(d)
     
     return d
 
@@ -37,14 +35,13 @@ def create_pie(filename):
     pie_chart = dict["green_count"]
 
     x = list(pie_chart.values())
-    # plt.style.use('_mpl-gallery-nogrid')
     fig, ax = plt.subplots()
     ax.axis('off')
 
     labels = 'Green', 'Not Green'
 
     ax.pie(x, radius= 8, center=(4,4), wedgeprops={"linewidth": 1, "edgecolor": "white"}, frame=True, labels=labels, autopct='%1.1f%%', colors=[(0.24, 0.69, 0.1, 0.8),(0.924, 0.69, 0.1, 0.8)])
-    ax.set_title("Proportion of Top 100 Company's Websites that are considered Green")
+    ax.set_title("Proportion of Top 100 Companies' Websites That Are Considered Green")
 
     fig.savefig('Pie.png')
 
@@ -64,9 +61,9 @@ def create_histogram(cur, conn):
     fig, ax = plt.subplots(figsize =(10, 7))
     N, bins, patches = ax.hist(a, bins = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1], edgecolor='white', linewidth=1)
 
-    ax.set_title('Histogram of the Percentage of companies the Top 100 Companies are Cleaner than')
-    ax.set_xlabel('Percentage of Companies that are less clean than (in decimal form)')
-    ax.set_ylabel('# of Companies')
+    ax.set_title("Histogram of How Green the Top 100 Companies' Websites Are")
+    ax.set_xlabel('Decimal Representing the Percentage of Tested Resources the Website is Cleaner Than')
+    ax.set_ylabel('Number of Companies')
     ax.set_ybound(0,25)
     ax.set_xticks([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1])
 
@@ -116,7 +113,7 @@ def create_bar_one(filename):
 
     ax.set_xlabel('Average Stock Price ($)')
     ax.set_ylabel('Company Name')
-    ax.set_title('Top 10 Companies w/the Highest Average Stock Price')
+    ax.set_title('Top 10 Companies with the Highest Average Stock Price')
 
     for i in range(10):
         ax.text(float(y[i]) + 100, i, '$' + str(y[i]), ha = 'center')
@@ -135,8 +132,6 @@ def bar_two_calc(cur, conn):
     data_list = cur.fetchall()
     
     for data in data_list:
-        # cb = float('{:0.3e}'.format(float(data[0]) / float(data[1])))
-        # cb = float(data[0]) / float(data[1])
         cb = float(data[0]) / (float(data[1]) * 0.00001)
         tup_l.append((cb, data[2], int(data[3])))
 
