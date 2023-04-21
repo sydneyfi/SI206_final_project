@@ -1,3 +1,6 @@
+# Team name: The Pie Chart Pastries
+# Team Members: Selena Wang, Sydney Finkelstein, Katherine Zhao 
+
 from urllib.request import urlopen
 import matplotlib.pyplot as plt
 import numpy as np
@@ -12,7 +15,7 @@ import environment
 import topCompanies
 
 
-
+# make a doc string for function
 def pie_calc(cur, conn):
     d = {}
 
@@ -181,13 +184,6 @@ def create_bar_two(filename):
 
 
 def main():
-    #put other file functions here in following order: topCompanies, stockInfo, environment
-    # for i in range(0,4):
-    #     topCompanies.topCompanies()
-    # for i in range(0,4):
-    #     stockInfo.stockInfo()
-    # for i in range(0,4):
-    #     environment.environment()
 
     main_dict = {}
 

@@ -1,3 +1,6 @@
+# Team name: The Pie Chart Pastries
+# Team Members: Selena Wang, Sydney Finkelstein, Katherine Zhao 
+
 from bs4 import BeautifulSoup
 import re
 import os

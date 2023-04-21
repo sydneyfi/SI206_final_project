@@ -1,3 +1,6 @@
+# Team name: The Pie Chart Pastries
+# Team Members: Selena Wang, Sydney Finkelstein, Katherine Zhao 
+
 from urllib.request import urlopen
 import sqlite3
 import certifi
